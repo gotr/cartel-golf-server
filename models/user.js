@@ -8,6 +8,7 @@ var userSchema = Schema({
     ref: 'Cartel',
     required: true
   },
+  active: { type: Boolean, default: true },
   created: { type: Date, default: Date.now }
 });
 
