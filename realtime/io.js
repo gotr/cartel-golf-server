@@ -10,13 +10,13 @@ io.on('connection', function (socket) {
   
   socket.on(messageTypes.signIn, token => {
     User.findById(token, (err, user) => {
-      if (!err) {
+      if (user) {
         if (user.active) {
           socket.user = user;
           connectedUsers[user.id] = Date.now();
-          // return object with headers for past rounds for the user's cartel
-          // and a complete pendingRound if there is one
-          socket.emit(messageTypes.setRound, {
+          // Return all rounds for the user's cartel.
+          // Sort pendingRound (if there is one) at the top.
+          socket.emit(messageTypes.setRounds, {
             rounds: [],
             pendingRound: null
           })
@@ -25,6 +25,8 @@ io.on('connection', function (socket) {
           // send message that will remove the token from the device
           socket.emit(messageTypes.deactivate);
         }
+      } else {
+        socket.emit(messageTypes.deactivate);
       }
     });
   });
